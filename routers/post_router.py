@@ -33,3 +33,13 @@ async def update_post(postId: int, post: schemas.AddOrUpdatePost, user: models.A
 async def delete_post(postId: int, user: models.Account = Depends(get_current_account),
                       db: Session = Depends(get_db)):
     return post_delete(postId, user.id, db)
+
+
+@router.put('/posts/like/{postId}', tags=['post'])
+async def like_post(postId: int, user: models.Account = Depends(get_current_account), db: Session = Depends(get_db)):
+    return 0
+
+
+@router.put('/posts/dislike/{postId}', tags=['post'])
+async def dislike_post(postId: int, user: models.Account = Depends(get_current_account), db: Session = Depends(get_db)):
+    return 0

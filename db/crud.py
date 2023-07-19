@@ -71,3 +71,23 @@ def update_post(postId, post: schemas.AddOrUpdatePost, db: Session):
 def delete_post(postId: int, db: Session):
     db.query(models.Post).filter(models.Post.id == postId).delete()
     db.commit()
+
+
+def like_post(likes: int, postId: int, db: Session):
+    db.query(models.Post).filter(models.Post.id == postId).update(
+        {
+            models.Post.likes: (likes + 1),
+        }
+    )
+    db.commit()
+    return True
+
+
+def dislike_post(dislikes: int, postId: int, db: Session):
+    db.query(models.Post).filter(models.Post.id == postId).update(
+        {
+            models.Post.dislikes: (dislikes + 1),
+        }
+    )
+    db.commit()
+    return True
