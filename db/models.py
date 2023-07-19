@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 
-from database import engine
+from db.database import engine
 
 Base = declarative_base()
 
@@ -18,7 +18,7 @@ class Account(Base):
     password = Column(String(255), nullable=False)
     email = Column(String(255), nullable=False)
 
-    owner_post = relationship('Account', backref='account')
+    owner_post = relationship('Post', backref='account')
 
 
 class Post(Base):

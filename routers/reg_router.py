@@ -5,14 +5,14 @@ from fastapi.security import HTTPBasic
 from db.db import get_db
 from auth.auth import security_for_reg
 from controllers.reg_controller import reg_user, get_current_account
-from db import models
+from models import schemas
 
 
 router = routing.APIRouter()
 
 
 @router.post('/registration', tags=['registration'], status_code=201)
-async def registration_user(user: models.Account, db: Session = Depends(get_db),
+async def registration_user(user: schemas.AccountReg, db: Session = Depends(get_db),
                             account: HTTPBasic | None = Depends(security_for_reg)):
     if account:
         raise HTTPException(status_code=403)
