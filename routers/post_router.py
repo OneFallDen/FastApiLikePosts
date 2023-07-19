@@ -11,25 +11,25 @@ from controllers.post_controller import post_get, post_add, post_delete, post_up
 router = routing.APIRouter()
 
 
-@router.get('/posts/{postId}', tags=['animal'])
+@router.get('/posts/{postId}', tags=['post'])
 async def get_post(postId: int, db: Session = Depends(get_db),
                    account: models.Account | None = Depends(get_current_account)):
     return post_get(postId, db)
 
 
-@router.post('/posts', tags=['animal'], status_code=201)
+@router.post('/posts', tags=['post'], status_code=201)
 async def add_post(post: schemas.AddOrUpdatePost, user: models.Account = Depends(get_current_account),
                    db: Session = Depends(get_db)):
     return post_add(post, user.id, db)
 
 
-@router.put('/posts/{postId}', tags=['animal'])
+@router.put('/posts/{postId}', tags=['post'])
 async def update_post(postId: int, post: schemas.AddOrUpdatePost, user: models.Account = Depends(get_current_account),
                       db: Session = Depends(get_db)):
     return post_update(postId, post, user.id, db)
 
 
-@router.delete('/posts/{postId}', tags=['animal'])
+@router.delete('/posts/{postId}', tags=['post'])
 async def delete_post(postId: int, user: models.Account = Depends(get_current_account),
                       db: Session = Depends(get_db)):
     return post_delete(postId, user.id, db)
