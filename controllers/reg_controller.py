@@ -1,0 +1,64 @@
+from fastapi.security import HTTPBasicCredentials
+from sqlalchemy.orm import Session
+from fastapi import HTTPException, Depends
+import re
+
+from db.crud import check_email, signup_user, get_user
+from auth.auth import encode_password, verify_password
+from db.db import get_db
+from auth.auth import security
+
+pattern = r"^[-\w\.]+@([-\w]+\.)+[-\w]{2,4}$"
+
+
+def reg_user(firstname: str, lastname: str, email: str, password: str, db: Session):
+    if not firstname:
+        raise HTTPException(status_code=400)
+    if firstname.strip(' ') == '':
+        raise HTTPException(status_code=400)
+    if not lastname:
+        raise HTTPException(status_code=400)
+    if lastname.rstrip(' ') == '':
+        raise HTTPException(status_code=400)
+    if not email:
+        raise HTTPException(status_code=400)
+    if email.strip(' ') == '':
+        raise HTTPException(status_code=400)
+    if re.match(pattern, email) is None:
+        raise HTTPException(status_code=400)
+    if not password:
+        raise HTTPException(status_code=400)
+    if password.strip(' ') == '':
+        raise HTTPException(status_code=400)
+    s = 0
+    try:
+        s = check_email(email, db)
+    except:
+        d = 1
+    if s > 0:
+        raise HTTPException(status_code=409)
+    hashed_password = encode_password(password)
+    user_id = signup_user(firstname, lastname, email, hashed_password, db)
+    return {
+        'id': user_id,
+        'firstName': firstname,
+        'lastName': lastname,
+        'email': email,
+        'role': 'USER'
+    }
+
+
+async def get_current_account(db: Session = Depends(get_db),
+                              credentials: HTTPBasicCredentials | None = Depends(security),
+                              ):
+    if not credentials:
+        raise HTTPException(status_code=401)
+    try:
+        user = get_user(credentials.username, db)
+    except:
+        raise HTTPException(status_code=401)
+    if re.match(pattern, credentials.username) is None:
+        raise HTTPException(status_code=401)
+    if not user or not verify_password(credentials.password, user.password):
+        raise HTTPException(status_code=401)
+    return user
