@@ -12,8 +12,7 @@ router = routing.APIRouter()
 
 
 @router.get('/posts/{postId}', tags=['post'])
-async def get_post(postId: int, db: Session = Depends(get_db),
-                   account: models.Account | None = Depends(get_current_account)):
+async def get_post(postId: int, db: Session = Depends(get_db)):
     return post_get(postId, db)
 
 
