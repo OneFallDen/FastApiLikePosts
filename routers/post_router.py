@@ -5,7 +5,7 @@ from db.db import get_db
 from controllers.reg_controller import get_current_account
 from db import models
 from models import schemas
-from controllers.post_controller import post_get, post_add, post_delete, post_update
+from controllers.post_controller import post_get, post_add, post_delete, post_update, post_like, post_dislike
 
 
 router = routing.APIRouter()
@@ -37,9 +37,9 @@ async def delete_post(postId: int, user: models.Account = Depends(get_current_ac
 
 @router.put('/posts/like/{postId}', tags=['post'])
 async def like_post(postId: int, user: models.Account = Depends(get_current_account), db: Session = Depends(get_db)):
-    return 0
+    return post_like(postId, user.id, db)
 
 
 @router.put('/posts/dislike/{postId}', tags=['post'])
 async def dislike_post(postId: int, user: models.Account = Depends(get_current_account), db: Session = Depends(get_db)):
-    return 0
+    return post_dislike(postId, user.id, db)

@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import select, and_
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
@@ -58,7 +58,7 @@ def add_post(post: schemas.AddOrUpdatePost, accountId: int, db: Session):
     return db_post
 
 
-def update_post(postId, post: schemas.AddOrUpdatePost, db: Session):
+def update_post(postId: int, post: schemas.AddOrUpdatePost, db: Session):
     db.query(models.Post).filter(models.Post.id == postId).update(
         {
             models.Post.title: post.title,
@@ -74,13 +74,14 @@ def delete_post(postId: int, db: Session):
 
 
 def like_post(likes: int, postId: int, db: Session):
+    likes += 1
     db.query(models.Post).filter(models.Post.id == postId).update(
         {
-            models.Post.likes: (likes + 1),
+            models.Post.likes: likes,
         }
     )
     db.commit()
-    return True
+    return 0
 
 
 def dislike_post(dislikes: int, postId: int, db: Session):
