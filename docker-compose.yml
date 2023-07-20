@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+# Сервис для разворачивания контейнера с базой данных
+  database:
+    image: postgres:latest
+    restart: always
+    volumes:
+      - /var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=fastapiposts
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+
+
+# Сервис для разворачивания контейнера с приложением
+  webapi:
+    container_name: webapi
+    build: .
+    command: bash -c "python models_for_start.py createdb && uvicorn main:app --reload --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    restart: always
+    environment:
+      - POSTGRESQL_CONFIG=postgresql+psycopg2://postgres:123@database/fastapiposts
+      - PASSWORD_SALT=f239b01695e5a6f287788330b14b337e5b5e2055a230f7ac8f21fa50706eb255
