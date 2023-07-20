@@ -19,10 +19,10 @@ def post_add(post: schemas.AddOrUpdatePost, accountId: int, db: Session):
 def post_update(postId: int, post: schemas.AddOrUpdatePost, accountId: int, db: Session):
     try:
         posts = get_post(postId, db)
-        if posts.owner != accountId:
-            raise HTTPException(status_code=403)
     except:
         raise HTTPException(status_code=404, detail='Post not found')
+    if posts.owner != accountId:
+        raise HTTPException(status_code=403)
     update_post(postId, post, db)
     return get_post(postId, db)
 
@@ -30,10 +30,10 @@ def post_update(postId: int, post: schemas.AddOrUpdatePost, accountId: int, db: 
 def post_delete(postId: int, accountId: int, db: Session):
     try:
         post = get_post(postId, db)
-        if post.owner != accountId:
-            raise HTTPException(status_code=403)
     except:
         raise HTTPException(status_code=404, detail='Post not found')
+    if post.owner != accountId:
+        raise HTTPException(status_code=403)
     delete_post(postId, db)
 
 
